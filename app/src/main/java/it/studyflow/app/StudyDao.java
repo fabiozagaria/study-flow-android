@@ -10,4 +10,10 @@ public interface StudyDao {
     @Delete void delete(Task task);
     @Insert(onConflict = OnConflictStrategy.IGNORE) void session(StudySession session);
     @Query("SELECT COALESCE(SUM(minutes), 0) FROM sessions") LiveData<Integer> minutes();
+    @Query("SELECT * FROM calendar_events ORDER BY date, time, title") LiveData<List<CalendarEvent>> events();
+    @Insert(onConflict = OnConflictStrategy.IGNORE) long insertEvent(CalendarEvent event);
+    @Update void updateEvent(CalendarEvent event);
+    @Delete void deleteEvent(CalendarEvent event);
+    @Query("SELECT sourceKey FROM calendar_events") List<String> eventSources();
 }
+

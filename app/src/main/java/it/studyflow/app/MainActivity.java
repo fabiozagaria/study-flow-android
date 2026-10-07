@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             handler.removeCallbacks(tick); persistTimer(); updateTimer();
         });
         BottomNavigationView nav = findViewById(R.id.navigation);
-        nav.setOnItemSelectedListener(item -> { section = item.getItemId(); render(); return true; });
+        nav.setOnItemSelectedListener(item -> { if (item.getItemId() == R.id.calendar) { startActivity(new android.content.Intent(this, CalendarActivity.class)); return false; } section = item.getItemId(); render(); return true; });
         if (state != null) nav.setSelectedItemId(state.getInt("section", R.id.today));
         render();
     }

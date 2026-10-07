@@ -1,0 +1,21 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+<com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar" android:layout_width="match_parent" android:layout_height="72dp" android:background="@color/sf_surface" app:title="Calendario" app:titleTextAppearance="@style/StudyTitle"/>
+<androidx.core.widget.NestedScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+<com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content"><CalendarView android:id="@+id/month" android:layout_width="match_parent" android:layout_height="wrap_content"/></com.google.android.material.card.MaterialCardView>
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+<com.google.android.material.button.MaterialButton android:id="@+id/addEvent" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="+ Evento"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/importMail" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="Gmail"/>
+</LinearLayout>
+<TextView android:id="@+id/eventDay" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="18sp" android:textColor="@color/sf_primary" android:padding="12dp"/>
+<LinearLayout android:id="@+id/events" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
+<com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp">
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Importazione da Gmail" android:textSize="22sp"/>
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Lettura di massimo 40 messaggi per ricerca. Controlla titolo, data e ora prima di salvare: gli eventi restano solo in StudyFlow." android:textColor="@color/sf_muted" android:textSize="16sp" android:paddingTop="12dp"/>
+<TextView android:id="@+id/importStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="16sp" android:paddingVertical="16dp" android:text="Tocca Gmail per riconoscere gli appuntamenti nelle email recenti." android:accessibilityLiveRegion="polite"/>
+<ProgressBar android:id="@+id/importProgress" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="4dp" android:indeterminate="true" android:visibility="gone"/>
+<LinearLayout android:id="@+id/proposals" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/disconnectMail" style="@style/Widget.Material3.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Scollega Gmail"/>
+</LinearLayout></com.google.android.material.card.MaterialCardView>
+</LinearLayout></androidx.core.widget.NestedScrollView></LinearLayout>

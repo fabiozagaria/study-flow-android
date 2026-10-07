@@ -18,7 +18,8 @@ Se Android Studio richiede il percorso SDK, seleziona quello installato sul tuo 
 - Attività: creazione, modifica, eliminazione con conferma, materia, scadenza e priorità. Spunta per completare; tocca la scheda per modificare.
 - Pomodoro: 25 minuti di studio, 5 di pausa, avvio, sospensione e reset. Ogni fase successiva viene avviata manualmente.
 - Statistiche: minuti e sessioni complete, percentuale di attività completate.
-- Room: dati sul dispositivo, senza account o servizi esterni.
+- Calendario interno: eventi manuali e proposte da Gmail, con conferma prima del salvataggio.
+- Room: attività, sessioni ed eventi sul dispositivo. Gmail richiede un account Google e una connessione.
 
 Il timer conserva la scadenza quando l'app passa in background o viene chiusa; il completamento viene elaborato al ritorno nell'app. Non ci sono notifiche né allarmi in background. Una sessione sospesa o reimpostata non aggiunge minuti. Il timer usa l'ora del dispositivo: modificarla durante una sessione altera il conteggio.
 Le materie sono campi delle attività; questa versione non ha un catalogo separato, calendario o grafici.
@@ -47,3 +48,11 @@ Sviluppato da **fabiozagariadev**.
 ## Tema
 
 Dal menu principale seleziona **Tema → Scuro**, oppure apri **Impostazioni → Tema scuro**. Le preferenze vengono salvate; **Tema nero notte** usa il fondo nero in modalità scura.
+
+## Gmail e calendario interno
+
+Apri **Calendario** dalla barra in basso. Tocca un giorno per visualizzare gli eventi o **+ Evento** per crearne uno. Con **Gmail** l’app analizza le email recenti e propone appuntamenti da controllare: nessun filtro da impostare, nessun salvataggio automatico.
+
+Prima di usare Gmail configura il client OAuth Android e Gmail API: [istruzioni complete](docs/GMAIL_SETUP.md). Senza questa configurazione il calendario manuale funziona, ma l’accesso Gmail può fallire. L’importazione reale non è stata provata con un account Google nell’ambiente di sviluppo.
+
+La versione 1.3 migra il database dalla versione precedente senza eliminare attività o sessioni. Sono inclusi test unitari per il riconoscimento delle date.
