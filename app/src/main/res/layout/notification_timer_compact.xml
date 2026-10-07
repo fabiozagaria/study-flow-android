@@ -1,0 +1,6 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="48dp" android:orientation="horizontal" android:gravity="center_vertical">
+<Chronometer android:id="@+id/notificationCountdown" android:layout_width="128dp" android:layout_height="match_parent" android:gravity="center_vertical" android:includeFontPadding="false" android:textAppearance="@style/TextAppearance.Compat.Notification.Title" android:textSize="30sp" android:fontFamily="sans-serif-medium" android:autoSizeTextType="uniform" android:autoSizeMinTextSize="20sp" android:autoSizeMaxTextSize="30sp" android:autoSizeStepGranularity="1sp"/>
+<LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="12dp">
+<TextView android:id="@+id/notificationPhase" android:layout_width="match_parent" android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.Compat.Notification.Title" android:textSize="14sp" android:maxLines="1" android:ellipsize="end"/>
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.Compat.Notification" android:text="Tempo rimanente" android:textSize="12sp"/>
+</LinearLayout></LinearLayout>

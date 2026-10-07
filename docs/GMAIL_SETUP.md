@@ -1,23 +1,34 @@
-# Collegare Gmail a StudyFlow
+# Attivare Gmail per il tuo account
 
-L'app usa un account Google tramite Google Play Services e lo scope `https://www.googleapis.com/auth/gmail.readonly`. Il calendario è interno: non serve Google Calendar API e non vengono scritti eventi su Google Calendar.
+**Per l’uso personale di StudyFlow non serve un abbonamento.** Google indica che l’uso standard della Gmail API è gratuito entro le quote. Questa app importa al massimo 40 email per volta. [Costi ufficiali](https://developers.google.com/workspace/gmail/api/reference/quota#pricing).
 
-## Configurazione richiesta dal proprietario del progetto
+La configurazione serve per permettere a Google di riconoscere l’app che legge le tue email. Si fa una sola volta; non devi inserire password Gmail, chiavi API o file nel progetto.
 
-1. Apri https://console.cloud.google.com/ e crea o seleziona un progetto.
-2. In **API e servizi → Libreria**, abilita **Gmail API**.
-3. Configura la schermata di consenso in **Google Auth Platform**: nome StudyFlow, contatto sviluppatore e pubblico adatto al tuo account. Per prove con utenti esterni, lascia lo stato **Testing** e aggiungi gli indirizzi Gmail degli utenti di test.
-4. In **Data Access / Accesso ai dati** aggiungi lo scope Gmail `gmail.readonly`.
-5. In **Clients / Client** crea un **OAuth client Android**, con:
-   - Package: `it.studyflow.app`
-   - SHA-1 del certificato dell'APK debug consegnato: `05:27:89:2B:EA:ED:B6:A8:E1:E0:1D:39:96:2D:AB:4C:A8:5C:06:B1`
-6. Attendi la propagazione della configurazione. Installa l'APK su un dispositivo con Google Play Services, apri **Calendario → Gmail → Continua** e scegli un account autorizzato nei test.
+## Sei passaggi
 
-La configurazione OAuth associa il package e la firma al progetto Google Cloud. Questo flusso Android non richiede una chiave API o un client secret nel codice. Non pubblicare credenziali o keystore nel repository.
+1. Apri [Google Cloud Console](https://console.cloud.google.com/) con il tuo account Google. Dal selettore in alto scegli **Nuovo progetto**, chiamalo `StudyFlow` e selezionalo.
+2. Vai in **API e servizi → Libreria**, cerca **Gmail API** e premi **Abilita**.
+3. Apri **Google Auth Platform → Branding** (o **Inizia**). Inserisci `StudyFlow` come nome e la tua email come contatto. In **Audience / Pubblico**, scegli utenti esterni e lascia l’app in **Testing**; aggiungi il tuo indirizzo Gmail tra gli **utenti di test**.
+4. In **Data Access / Accesso ai dati** aggiungi il permesso `https://www.googleapis.com/auth/gmail.readonly`. Consente la lettura, senza modificare o inviare email.
+5. In **Clients / Client → Crea client**, scegli **Android** e copia questi due valori:
 
-Se ricompili sul tuo computer, avrai normalmente un certificato debug diverso: crea anche il client OAuth Android per quella SHA-1. Puoi vederla con `./gradlew signingReport`. Per una release o per Play App Signing registra il certificato effettivo della versione distribuita.
+   - **Nome pacchetto:** `it.studyflow.app`
+   - **SHA-1:** `05:27:89:2B:EA:ED:B6:A8:E1:E0:1D:39:96:2D:AB:4C:A8:5C:06:B1`
 
-Lo scope Gmail è ristretto. La pubblicazione del repository GitHub non configura né approva OAuth. La distribuzione pubblica dell'accesso Gmail può richiedere la verifica di Google e, a seconda dell'architettura e dell'utilizzo dei dati, ulteriori requisiti. Questa versione legge e analizza i messaggi sul dispositivo.
+6. Salva. Sul telefono apri **StudyFlow → Calendario → Gmail → Continua**, scegli l’account aggiunto agli utenti di test e autorizza l’accesso. La configurazione potrebbe richiedere un po’ di tempo prima di essere riconosciuta.
+
+Se usi l’app solo personalmente, non devi avviare la verifica per una distribuzione pubblica: Google prevede eccezioni per uso personale e test. [Indicazioni di Google](https://support.google.com/cloud/answer/13464323?hl=en).
+
+Non serve abilitare Google Calendar API: gli eventi vengono salvati nel calendario interno di StudyFlow. Non serve acquistare servizi di intelligenza artificiale: l’analisi avviene sul dispositivo.
+
+## Se non entra
+
+- **Codice 10:** controlla nome pacchetto e SHA-1 del client Android.
+- **Accesso negato / HTTP 403:** verifica Gmail API abilitata, scope `gmail.readonly` e il tuo account nell’elenco degli utenti di test.
+- Se ricompili l’app sul tuo computer, la firma debug può cambiare. Leggi la nuova SHA-1 con `./gradlew signingReport` e registra anche quella in Google Cloud. Gli APK forniti qui mantengono la firma indicata sopra.
+- In modalità di test Google può richiedere nuovamente il consenso. Usa un dispositivo con Google Play Services e una connessione Internet.
+
+Per una distribuzione Gmail a un pubblico ampio valgono requisiti diversi, inclusa l’eventuale verifica Google degli scope. Il repository pubblico GitHub non attiva Gmail da solo.
 
 ## Funzionamento
 

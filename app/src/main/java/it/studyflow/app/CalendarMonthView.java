@@ -16,7 +16,7 @@ public class CalendarMonthView extends LinearLayout {
     private Map<LocalDate,CalendarIndex.Day> marks=new HashMap<>();
     private Listener listener;
     private final TextView title,summary;
-    private final GridLayout grid;
+    private final LinearLayout grid;
     private int dp(int n) { return (int)(n*getResources().getDisplayMetrics().density); }
     public CalendarMonthView(Context c,AttributeSet attrs) {
         super(c,attrs); setOrientation(VERTICAL); setPadding(dp(8),dp(12),dp(8),dp(16));
@@ -26,7 +26,7 @@ public class CalendarMonthView extends LinearLayout {
         MaterialButton next=new MaterialButton(c,null,com.google.android.material.R.attr.borderlessButtonStyle);next.setText("›");next.setTextSize(28);next.setContentDescription("Mese successivo");next.setPadding(0,0,0,0);header.addView(next,new LayoutParams(dp(48),dp(56)));addView(header);
         prev.setOnClickListener(v -> { displayed=displayed.minusMonths(1);render(); });next.setOnClickListener(v -> { displayed=displayed.plusMonths(1);render(); });
         LinearLayout weekdays=new LinearLayout(c);for(String day:new String[]{"L","M","M","G","V","S","D"}) { TextView text=new TextView(c);text.setText(day);text.setTextSize(13);text.setGravity(Gravity.CENTER);text.setTextColor(c.getColor(R.color.sf_muted));weekdays.addView(text,new LayoutParams(0,dp(32),1)); }addView(weekdays);
-        grid=new GridLayout(c);grid.setColumnCount(7);addView(grid,new LayoutParams(-1,-2));
+        grid=new LinearLayout(c);grid.setOrientation(VERTICAL);addView(grid,new LayoutParams(-1,-2));
         LinearLayout footer=new LinearLayout(c);footer.setGravity(Gravity.CENTER_VERTICAL);footer.setPadding(dp(8),dp(8),dp(8),0);
         summary=new TextView(c);summary.setTextSize(13);footer.addView(summary,new LayoutParams(0,-2,1));
         MaterialButton today=new MaterialButton(c,null,com.google.android.material.R.attr.borderlessButtonStyle);today.setText("Oggi");footer.addView(today,new LayoutParams(-2,dp(48)));today.setOnClickListener(v -> choose(LocalDate.now()));addView(footer);
@@ -42,25 +42,31 @@ public class CalendarMonthView extends LinearLayout {
     public void setItems(List<Task> tasks,List<CalendarEvent> events) { marks=CalendarIndex.build(tasks,events);render(); }
     private void choose(LocalDate date) { setDate(date);if(listener!=null)listener.selected(date); }
     private GradientDrawable circle(int color) { GradientDrawable d=new GradientDrawable();d.setShape(GradientDrawable.OVAL);d.setColor(color);return d; }
+    private void addWeek(LinearLayout week) { grid.addView(week,new LayoutParams(-1,dp(60))); }
     private void render() {
         Context c=getContext();title.setText(displayed.atDay(1).format(DateTimeFormatter.ofPattern("MMMM yyyy",Locale.ITALIAN)));grid.removeAllViews();
         int totalTasks=0,totalEvents=0;for(Map.Entry<LocalDate,CalendarIndex.Day> entry:marks.entrySet()) if(YearMonth.from(entry.getKey()).equals(displayed)) { totalTasks+=entry.getValue().tasks;totalEvents+=entry.getValue().events; }
         summary.setText(totalTasks+" attività · "+totalEvents+" eventi");
+        LinearLayout week=null; int dayIndex=0;
         for(LocalDate date:CalendarIndex.grid(displayed)) {
-            LinearLayout cell=new LinearLayout(c);cell.setOrientation(VERTICAL);cell.setGravity(Gravity.CENTER);cell.setMinimumHeight(dp(48));cell.setFocusable(true);
-            GridLayout.LayoutParams params=new GridLayout.LayoutParams();params.width=0;params.height=dp(52);params.columnSpec=GridLayout.spec(GridLayout.UNDEFINED,1f);cell.setLayoutParams(params);
+            if(dayIndex%7==0) { week=new LinearLayout(c); week.setOrientation(HORIZONTAL); addWeek(week); }
+            dayIndex++;
+            FrameLayout cell=new FrameLayout(c);cell.setMinimumHeight(dp(60));cell.setFocusable(true);cell.setClickable(true);
+            cell.setLayoutParams(new LayoutParams(0,dp(60),1));
+            FrameLayout plate=new FrameLayout(c);FrameLayout.LayoutParams plateParams=new FrameLayout.LayoutParams(dp(36),dp(36),Gravity.TOP|Gravity.CENTER_HORIZONTAL);plateParams.topMargin=dp(6);cell.addView(plate,plateParams);
             boolean inMonth=YearMonth.from(date).equals(displayed),picked=date.equals(selected),today=date.equals(LocalDate.now());
-            if(picked) { GradientDrawable bg=circle(c.getColor(R.color.sf_accent));cell.setBackground(bg); }
-            else if(today) { GradientDrawable bg=circle(android.graphics.Color.TRANSPARENT);bg.setStroke(dp(1),c.getColor(R.color.sf_primary));cell.setBackground(bg); }
-            TextView number=new TextView(c);number.setText(String.valueOf(date.getDayOfMonth()));number.setTextSize(16);number.setTextColor(c.getColor(picked||inMonth ? R.color.sf_text : R.color.sf_muted));if(today)number.setTypeface(null,Typeface.BOLD);cell.addView(number);
-            LinearLayout dots=new LinearLayout(c);dots.setGravity(Gravity.CENTER);dots.setMinimumHeight(dp(10));CalendarIndex.Day items=marks.get(date);
+            if(picked) { GradientDrawable bg=circle(c.getColor(R.color.sf_accent));plate.setBackground(bg); }
+            else if(today) { GradientDrawable bg=circle(android.graphics.Color.TRANSPARENT);bg.setStroke(dp(1),c.getColor(R.color.sf_primary));plate.setBackground(bg); }
+            TextView number=new TextView(c);number.setGravity(Gravity.CENTER);number.setIncludeFontPadding(false);number.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);number.setText(String.valueOf(date.getDayOfMonth()));number.setTextSize(16);number.setTextColor(c.getColor(picked||inMonth ? R.color.sf_text : R.color.sf_muted));if(today)number.setTypeface(null,Typeface.BOLD);plate.addView(number,new FrameLayout.LayoutParams(-1,-1));
+            LinearLayout dots=new LinearLayout(c);dots.setGravity(Gravity.CENTER);dots.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);CalendarIndex.Day items=marks.get(date);
             if(items!=null) {
                 if(items.tasks>0) { View dot=new View(c);GradientDrawable d=circle(c.getColor(items.done==items.tasks ? R.color.sf_muted : R.color.sf_primary));if(items.done==items.tasks) {d.setColor(android.graphics.Color.TRANSPARENT);d.setStroke(dp(1),c.getColor(R.color.sf_muted));}dot.setBackground(d);LayoutParams lp=new LayoutParams(dp(6),dp(6));lp.setMargins(dp(2),0,dp(2),0);dots.addView(dot,lp); }
                 if(items.events>0) { View dot=new View(c);dot.setBackground(circle(c.getColor(R.color.calendar_event)));LayoutParams lp=new LayoutParams(dp(4),dp(4));lp.setMargins(dp(2),0,dp(2),0);dots.addView(dot,lp); }
             }
-            cell.addView(dots);cell.setAlpha(inMonth||picked ? 1f : .5f);
+            FrameLayout.LayoutParams dotParams=new FrameLayout.LayoutParams(-1,dp(10),Gravity.TOP);dotParams.topMargin=dp(44);cell.addView(dots,dotParams);
+            cell.setSelected(picked);cell.setAlpha(inMonth||picked ? 1f : .5f);
             cell.setContentDescription(date.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy",Locale.ITALIAN))+(picked ? ", selezionato" : "")+(items==null ? ", nessun impegno" : ", "+items.tasks+" attività, "+items.done+" completate, "+items.events+" eventi"));
-            cell.setOnClickListener(v -> choose(date));grid.addView(cell);
+            cell.setOnClickListener(v -> choose(date));week.addView(cell);
         }
     }
 }

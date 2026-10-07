@@ -20,13 +20,23 @@ public class PomodoroService extends Service {
         super.onCreate(); Notifications.channels(this);
         lock=getSystemService(PowerManager.class).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"StudyFlow:Pomodoro"); lock.setReferenceCounted(false);
     }
+    private android.widget.RemoteViews countdownView(int layout,TimerState state) {
+        android.widget.RemoteViews view=new android.widget.RemoteViews(getPackageName(),layout);
+        view.setTextViewText(R.id.notificationPhase,state.breakPhase ? "Pausa" : "Sessione di studio");
+        view.setChronometer(R.id.notificationCountdown,SystemClock.elapsedRealtime()+TimerStore.remaining(this,state),null,true);
+        view.setChronometerCountDown(R.id.notificationCountdown,true);
+        return view;
+    }
     private Notification ongoing(TimerState state) {
         PendingIntent pause=PendingIntent.getService(this,3,new Intent(this,PomodoroService.class).setAction(PAUSE),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
         PendingIntent reset=PendingIntent.getService(this,4,new Intent(this,PomodoroService.class).setAction(RESET),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
         return Notifications.builder(this,Notifications.TIMER).setContentTitle(state.breakPhase ? "Pausa in corso" : "Pomodoro in corso")
             .setContentText("Il timer continua anche con lo schermo spento")
             .setContentIntent(Notifications.open(this,true)).setOngoing(true).setAutoCancel(false).setOnlyAlertOnce(true)
-            .setWhen(System.currentTimeMillis()+TimerStore.remaining(this,state)).setShowWhen(true).setUsesChronometer(true).setChronometerCountDown(true)
+            .setShowWhen(false)
+            .setStyle(new NotificationCompat.DecoratedCustomViewStyle())
+            .setCustomContentView(countdownView(R.layout.notification_timer_compact,state))
+            .setCustomBigContentView(countdownView(R.layout.notification_timer_expanded,state))
             .addAction(0,"Pausa",pause).addAction(0,"Reimposta",reset).build();
     }
     @Override public int onStartCommand(Intent intent,int flags,int id) {

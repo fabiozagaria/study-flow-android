@@ -66,3 +66,7 @@ Pianeta minimal nei colori crema e verde oliva. Icona Android adattiva con varia
 ## Novità 1.5
 
 Notifiche di completamento e scadenza con orario modificabile, Pomodoro in background con notifica persistente e calendario mensile con puntini e agenda delle attività. [Istruzioni](docs/NOTIFICATIONS_TIMER.md).
+
+## Correzioni 1.6
+
+Conto alla rovescia grande direttamente nella notifica, aggiornato ogni secondo da Android, e calendario con numeri centrati e puntini allineati sotto. [Guida Gmail semplificata per uso personale](docs/GMAIL_SETUP.md).
