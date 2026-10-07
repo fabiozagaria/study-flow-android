@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+<com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar" android:layout_width="match_parent" android:layout_height="72dp" android:background="@color/sf_surface" app:title="StudyFlow" app:titleTextAppearance="@style/StudyTitle" app:menu="@menu/toolbar"/>
+<androidx.core.widget.NestedScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true" android:clipToPadding="false">
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+<com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="12dp">
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="20dp" android:gravity="center_vertical">
+<ImageView android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/badge" android:padding="10dp" android:src="@drawable/ic_book" android:importantForAccessibility="no"/>
+<TextView android:id="@+id/summary" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:textSize="19sp" android:lineSpacingExtra="4dp"/>
+</LinearLayout></com.google.android.material.card.MaterialCardView>
+<com.google.android.material.card.MaterialCardView android:id="@+id/focusCard" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="24dp" android:orientation="vertical">
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical"><ImageView android:layout_width="44dp" android:layout_height="44dp" android:padding="10dp" android:background="@drawable/badge" android:src="@drawable/ic_time" android:importantForAccessibility="no"/><TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Un momento per studiare" android:textSize="22sp"/></LinearLayout>
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:text="Scegli una materia e concentrati per 25 minuti. Una breve pausa ti aiuterà a ritrovare l’energia." android:textSize="18sp" android:textColor="@color/sf_muted" android:lineSpacingExtra="4dp"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/focus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="Apri Pomodoro" app:icon="@drawable/ic_time"/>
+</LinearLayout></com.google.android.material.card.MaterialCardView>
+<TextView android:id="@+id/listHeading" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Il tuo programma" android:textColor="@color/sf_primary" android:textSize="16sp" android:padding="12dp"/>
+<androidx.recyclerview.widget.RecyclerView android:id="@+id/list" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false"/>
+<TextView android:id="@+id/empty" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Il tuo programma è libero.
+Aggiungi un’attività per iniziare." android:textSize="18sp" android:textColor="@color/sf_muted" android:padding="24dp" android:lineSpacingExtra="6dp"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/add" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="8dp" android:text="+  Nuova attività"/>
+<com.google.android.material.card.MaterialCardView android:id="@+id/timerPanel" android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone">
+<LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_horizontal" android:orientation="vertical" android:padding="28dp">
+<ImageView android:layout_width="52dp" android:layout_height="52dp" android:padding="13dp" android:background="@drawable/badge" android:src="@drawable/ic_time" android:importantForAccessibility="no"/>
+<TextView android:id="@+id/timerMode" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="Sessione di studio" android:textSize="22sp"/>
+<TextView android:id="@+id/clock" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="25:00" android:textColor="@color/sf_primary" android:textSize="64sp" android:fontFamily="sans-serif-light" android:paddingVertical="24dp"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/start" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Avvia"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/reset" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Reimposta"/>
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="20dp" android:textSize="16sp" android:lineSpacingExtra="4dp" android:textColor="@color/sf_muted" android:text="25 minuti di studio, 5 di pausa.
+Ogni piccolo passo conta." android:gravity="center"/>
+</LinearLayout></com.google.android.material.card.MaterialCardView>
+</LinearLayout></androidx.core.widget.NestedScrollView>
+<com.google.android.material.bottomnavigation.BottomNavigationView android:id="@+id/navigation" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/sf_surface" app:elevation="0dp" app:menu="@menu/navigation" app:labelVisibilityMode="labeled"/>
+</LinearLayout>
