@@ -42,7 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
         MaterialSwitch black = new MaterialSwitch(this); black.setText("Tema nero notte\nNero puro in modalità scura"); black.setTextSize(18); black.setPadding(0,dp(12),0,dp(24)); black.setChecked(prefs.getBoolean("black", false)); content.addView(black);
         black.setOnCheckedChangeListener((button, checked) -> { prefs.edit().putBoolean("black", checked).apply(); recreate(); });
         TextView aboutLabel = new TextView(this); aboutLabel.setText("Informazioni"); aboutLabel.setTextSize(16); aboutLabel.setTextColor(getColor(R.color.sf_primary)); aboutLabel.setPadding(0,dp(32),0,dp(24)); content.addView(aboutLabel);
-        TextView about = new TextView(this); about.setText("StudyFlow\nVersione 1.3\n\nIl tuo planner di studio, sul tuo dispositivo."); about.setTextSize(18); about.setLineSpacing(dp(4),1); content.addView(about);
+        TextView about = new TextView(this); about.setText("StudyFlow\nVersione 1.4\n\nIl tuo planner di studio, sul tuo dispositivo."); about.setTextSize(18); about.setLineSpacing(dp(4),1); content.addView(about);
         TextView signature = new TextView(this); signature.setText("Sviluppato da fabiozagariadev"); signature.setTextSize(18); signature.setPadding(0, dp(24), 0, dp(12)); content.addView(signature);
         addProfileLink(content, "GitHub · fabiozagaria", "https://github.com/fabiozagaria");
         if (!getString(R.string.author_linkedin).isEmpty()) addProfileLink(content, "LinkedIn", getString(R.string.author_linkedin));

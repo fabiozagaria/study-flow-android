@@ -1,5 +1,7 @@
 # StudyFlow — Java + XML
 
+<img src="docs/assets/planet.png" width="96" alt="Icona StudyFlow: pianeta minimal verde oliva" />
+
 Planner di studio offline con Material Design 3. Interfaccia ispirata agli screenshot di Shizuku: fondo crema, accenti oliva, schede arrotondate e pulsanti a pillola. Impostazioni per tema automatico, chiaro, scuro e nero notte.
 
 ## Aprire da zero in Android Studio
@@ -56,3 +58,7 @@ Apri **Calendario** dalla barra in basso. Tocca un giorno per visualizzare gli e
 Prima di usare Gmail configura il client OAuth Android e Gmail API: [istruzioni complete](docs/GMAIL_SETUP.md). Senza questa configurazione il calendario manuale funziona, ma l’accesso Gmail può fallire. L’importazione reale non è stata provata con un account Google nell’ambiente di sviluppo.
 
 La versione 1.3 migra il database dalla versione precedente senza eliminare attività o sessioni. Sono inclusi test unitari per il riconoscimento delle date.
+
+## Icona
+
+Pianeta minimal nei colori crema e verde oliva. Icona Android adattiva con variante monocromatica per le icone a tema da Android 13. Favicon PNG e ICO disponibili in `docs/assets/`.

@@ -16,4 +16,3 @@ public interface StudyDao {
     @Delete void deleteEvent(CalendarEvent event);
     @Query("SELECT sourceKey FROM calendar_events") List<String> eventSources();
 }
-
