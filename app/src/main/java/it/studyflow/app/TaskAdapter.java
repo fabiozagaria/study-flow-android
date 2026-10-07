@@ -13,7 +13,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.Holder> {
     @NonNull @Override public Holder onCreateViewHolder(@NonNull ViewGroup parent, int type) { return new Holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.row_task, parent, false)); }
     @Override public void onBindViewHolder(@NonNull Holder h, int position) {
         Task t = items.get(position); h.title.setText(t.title);
-        h.detail.setText(t.subject + "\n" + java.time.LocalDate.parse(t.due).format(java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ITALIAN)) + " · " + new String[]{"Bassa", "Media", "Alta"}[t.priority]);
+        h.detail.setText(t.subject + "\n" + java.time.LocalDate.parse(t.due).format(java.time.format.DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ITALIAN)) + " · " + t.dueTime + " · " + new String[]{"Bassa", "Media", "Alta"}[t.priority]);
         h.done.setOnCheckedChangeListener(null); h.done.setChecked(t.done);
         h.done.setOnCheckedChangeListener((button, checked) -> actions.toggle(t, checked));
         h.itemView.setOnClickListener(v -> actions.edit(t)); h.itemView.setAlpha(t.done ? 0.6f : 1f);

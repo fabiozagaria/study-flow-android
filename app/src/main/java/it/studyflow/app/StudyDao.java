@@ -5,7 +5,10 @@ import java.util.List;
 @Dao
 public interface StudyDao {
     @Query("SELECT * FROM tasks ORDER BY done ASC, due ASC, priority DESC") LiveData<List<Task>> tasks();
-    @Insert void insert(Task task);
+    @Insert long insert(Task task);
+    @Query("SELECT * FROM tasks WHERE id = :id") Task task(long id);
+    @Query("SELECT * FROM tasks WHERE done = 0") List<Task> pendingTasks();
+    @Query("UPDATE tasks SET reminderSentFor = :due WHERE id = :id AND due || 'T' || dueTime = :due") void markReminder(long id, String due);
     @Update void update(Task task);
     @Delete void delete(Task task);
     @Insert(onConflict = OnConflictStrategy.IGNORE) void session(StudySession session);

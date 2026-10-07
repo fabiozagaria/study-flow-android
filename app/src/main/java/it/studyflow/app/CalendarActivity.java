@@ -18,6 +18,8 @@ public class CalendarActivity extends AppCompatActivity {
     CalendarViewModel model;
     LocalDate selected = LocalDate.now();
     List<CalendarEvent> all = new ArrayList<>();
+    List<Task> allTasks = new ArrayList<>();
+    PlannerViewModel planner;
     private int theme;
     private final androidx.activity.result.ActivityResultLauncher<android.content.Intent> signIn = registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(), result -> {
         try {
@@ -49,9 +51,11 @@ public class CalendarActivity extends AppCompatActivity {
         });
         MaterialToolbar toolbar = findViewById(R.id.toolbar); toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material); toolbar.setNavigationOnClickListener(v -> finish());
         if (state != null) selected = LocalDate.parse(state.getString("date", LocalDate.now().toString()));
-        CalendarView month = findViewById(R.id.month); month.setFirstDayOfWeek(Calendar.MONDAY);
-        month.setDate(selected.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        month.setOnDateChangeListener((v,y,m,d) -> { selected = LocalDate.of(y,m+1,d); render(); });
+        CalendarMonthView month = findViewById(R.id.month); month.setDate(selected);
+        if(state!=null) month.setDisplayedMonth(YearMonth.parse(state.getString("displayedMonth",YearMonth.from(selected).toString())));
+        month.setListener(date -> { selected=date;render(); });
+        planner=new ViewModelProvider(this).get(PlannerViewModel.class);
+        planner.tasks.observe(this,tasks -> { allTasks=tasks;render(); });
         model = new ViewModelProvider(this).get(CalendarViewModel.class);
         model.events.observe(this, events -> { all = events; render(); });
         model.status.observe(this, message -> ((TextView)findViewById(R.id.importStatus)).setText(message));
@@ -73,13 +77,24 @@ public class CalendarActivity extends AppCompatActivity {
         model.consent.observe(this, intent -> { if (intent != null) { model.consent.setValue(null); consent.launch(intent); } });
     }
     private void render() {
-        ((TextView)findViewById(R.id.eventDay)).setText(selected.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy", Locale.ITALIAN)));
+        ((CalendarMonthView)findViewById(R.id.month)).setItems(allTasks,all);
+        int taskCount=0,eventCount=0;
+        for(Task task:allTasks) if(task.due.equals(selected.toString())) taskCount++;
+        for(CalendarEvent event:all) if(event.date.equals(selected.toString())) eventCount++;
+        ((TextView)findViewById(R.id.eventDay)).setText(selected.format(DateTimeFormatter.ofPattern("EEEE d MMMM yyyy",Locale.ITALIAN))+"\n"+taskCount+" attività · "+eventCount+" eventi");
         LinearLayout list = findViewById(R.id.events); list.removeAllViews();
+        for(Task task:allTasks) if(task.due.equals(selected.toString())) {
+            MaterialCardView card=new MaterialCardView(this);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.bottomMargin=dp(12);card.setLayoutParams(lp);
+            LinearLayout content=new LinearLayout(this);content.setGravity(android.view.Gravity.CENTER_VERTICAL);content.setPadding(dp(16),dp(16),dp(16),dp(16));
+            CheckBox done=new CheckBox(this);done.setChecked(task.done);done.setContentDescription("Completa "+task.title);content.addView(done,new LinearLayout.LayoutParams(dp(48),dp(48)));
+            TextView text=new TextView(this);text.setText(task.dueTime+" · "+(task.done ? "Completata" : "Da completare")+"\n"+task.title+"\n"+task.subject+" · Priorità "+new String[]{"bassa","media","alta"}[task.priority]);text.setTextSize(17);text.setLineSpacing(dp(4),1);content.addView(text,new LinearLayout.LayoutParams(0,-2,1));
+            done.setOnCheckedChangeListener((button,checked) -> { task.done=checked;planner.save(task); });card.setAlpha(task.done ? .65f : 1f);card.addView(content);list.addView(card);
+        }
         for (CalendarEvent event : all) if (event.date.equals(selected.toString())) {
             MaterialCardView card = new MaterialCardView(this); LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1,-2); lp.bottomMargin = dp(12); card.setLayoutParams(lp);
             TextView text = new TextView(this); text.setText((event.time.isEmpty() ? "Tutto il giorno" : event.time) + "\n" + event.title + (event.notes.isEmpty() ? "" : "\n" + event.notes)); text.setTextSize(18); text.setPadding(dp(20),dp(20),dp(20),dp(20)); text.setLineSpacing(dp(5),1); card.addView(text); card.setOnClickListener(v -> edit(event)); list.addView(card);
         }
-        if (list.getChildCount() == 0) { TextView empty = new TextView(this); empty.setText("Nessun evento. Aggiungi un appuntamento per questo giorno."); empty.setTextSize(17); empty.setPadding(dp(16),dp(16),dp(16),dp(16)); list.addView(empty); }
+        if (list.getChildCount() == 0) { TextView empty = new TextView(this); empty.setText("Nessuna attività o evento per questo giorno. Aggiungi un appuntamento con + Evento."); empty.setTextSize(17); empty.setPadding(dp(16),dp(16),dp(16),dp(16)); list.addView(empty); }
     }
     void edit(CalendarEvent original) {
         LinearLayout form = new LinearLayout(this); form.setOrientation(LinearLayout.VERTICAL); form.setPadding(dp(24),0,dp(24),0);
@@ -105,7 +120,7 @@ public class CalendarActivity extends AppCompatActivity {
             CalendarEvent event = new CalendarEvent(); if (original != null) { event.id=original.id; event.sourceKey=original.sourceKey; }
             if (event.sourceKey.isEmpty()) event.sourceKey="manual:"+UUID.randomUUID();
             event.title=title.getText().toString().trim(); event.date=date[0].toString(); event.time=allDay.isChecked() ? "" : time[0]; event.notes=notes.getText().toString().trim();
-            model.save(event); selected=date[0]; ((CalendarView)findViewById(R.id.month)).setDate(selected.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()); render(); dialog.dismiss();
+            model.save(event); selected=date[0]; ((CalendarMonthView)findViewById(R.id.month)).setDate(selected); render(); dialog.dismiss();
         })); dialog.show();
     }
     private void renderProposals(List<MailProposal> proposals) {
@@ -122,5 +137,5 @@ public class CalendarActivity extends AppCompatActivity {
         }
     }
     @Override protected void onResume() { super.onResume(); if (theme != Appearance.theme(this)) recreate(); }
-    @Override protected void onSaveInstanceState(Bundle state) { state.putString("date",selected.toString()); super.onSaveInstanceState(state); }
+    @Override protected void onSaveInstanceState(Bundle state) { state.putString("date",selected.toString()); state.putString("displayedMonth",((CalendarMonthView)findViewById(R.id.month)).getDisplayedMonth().toString()); super.onSaveInstanceState(state); }
 }

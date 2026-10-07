@@ -2,7 +2,7 @@
 <com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar" android:layout_width="match_parent" android:layout_height="72dp" android:background="@color/sf_surface" app:title="Calendario" app:titleTextAppearance="@style/StudyTitle"/>
 <androidx.core.widget.NestedScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
-<com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content"><CalendarView android:id="@+id/month" android:layout_width="match_parent" android:layout_height="wrap_content"/></com.google.android.material.card.MaterialCardView>
+<com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content"><it.studyflow.app.CalendarMonthView android:id="@+id/month" android:layout_width="match_parent" android:layout_height="wrap_content"/></com.google.android.material.card.MaterialCardView>
 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
 <com.google.android.material.button.MaterialButton android:id="@+id/addEvent" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="+ Evento"/>
 <com.google.android.material.button.MaterialButton android:id="@+id/importMail" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:text="Gmail"/>

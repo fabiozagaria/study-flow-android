@@ -26,12 +26,13 @@ public class MainActivity extends AppCompatActivity {
     private int section = R.id.today, minutes;
     private TextView summary, clock, timerMode;
     private MaterialButton start;
-    private SharedPreferences prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private long remaining, deadline;
-    private boolean running, pause;
+    private final androidx.activity.result.ActivityResultLauncher<String> notificationPermission = registerForActivityResult(new androidx.activity.result.contract.ActivityResultContracts.RequestPermission(), granted -> {
+        if (granted && model!=null) model.restoreReminders();
+        if (!granted) Toast.makeText(this,"Puoi attivare gli avvisi da Impostazioni → Gestisci notifiche",Toast.LENGTH_LONG).show();
+    });
     private final Runnable tick = new Runnable() {
-        @Override public void run() { updateTimer(); if (running) handler.postDelayed(this, 250); }
+        @Override public void run() { updateTimer(); handler.postDelayed(this, 500); }
     };
 
     @Override public void onCreate(Bundle state) {
@@ -60,10 +61,12 @@ public class MainActivity extends AppCompatActivity {
         });
         findViewById(R.id.focus).setOnClickListener(v -> ((BottomNavigationView)findViewById(R.id.navigation)).setSelectedItemId(R.id.timer));
         model = new ViewModelProvider(this).get(PlannerViewModel.class);
-        prefs = getSharedPreferences("pomodoro", MODE_PRIVATE);
-        remaining = prefs.getLong("remaining", 25 * 60_000L);
-        deadline = prefs.getLong("deadline", 0);
-        running = prefs.getBoolean("running", false); pause = prefs.getBoolean("pause", false);
+        Notifications.channels(this);
+        android.content.SharedPreferences notices = getSharedPreferences("notifications", MODE_PRIVATE);
+        if (android.os.Build.VERSION.SDK_INT>=33 && !Notifications.allowed(this) && !notices.getBoolean("asked",false)) {
+            notices.edit().putBoolean("asked",true).apply(); notificationPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS);
+        }
+        model.restoreReminders();
         summary = findViewById(R.id.summary); clock = findViewById(R.id.clock);
         timerMode = findViewById(R.id.timerMode); start = findViewById(R.id.start);
         RecyclerView list = findViewById(R.id.list);
@@ -76,19 +79,12 @@ public class MainActivity extends AppCompatActivity {
         model.tasks.observe(this, value -> { tasks = value; render(); });
         model.minutes.observe(this, value -> { minutes = value; render(); });
         findViewById(R.id.add).setOnClickListener(v -> editTask(null));
-        start.setOnClickListener(v -> {
-            updateTimer();
-            if (running) { remaining = Math.max(0, deadline - System.currentTimeMillis()); running = false; }
-            else { deadline = System.currentTimeMillis() + remaining; running = true; }
-            persistTimer(); handler.removeCallbacks(tick); tick.run();
-        });
-        findViewById(R.id.reset).setOnClickListener(v -> {
-            running = false; pause = false; remaining = 25 * 60_000L;
-            handler.removeCallbacks(tick); persistTimer(); updateTimer();
-        });
+        start.setOnClickListener(v -> PomodoroService.command(this, TimerStore.read(this).running ? PomodoroService.PAUSE : PomodoroService.START));
+        findViewById(R.id.reset).setOnClickListener(v -> PomodoroService.command(this, PomodoroService.RESET));
         BottomNavigationView nav = findViewById(R.id.navigation);
         nav.setOnItemSelectedListener(item -> { if (item.getItemId() == R.id.calendar) { startActivity(new android.content.Intent(this, CalendarActivity.class)); return false; } section = item.getItemId(); render(); return true; });
         if (state != null) nav.setSelectedItemId(state.getInt("section", R.id.today));
+        if (getIntent().getBooleanExtra("openTimer",false)) nav.setSelectedItemId(R.id.timer);
         render();
     }
 
@@ -133,12 +129,15 @@ public class MainActivity extends AppCompatActivity {
         date.setOnClickListener(v -> new DatePickerDialog(this, (picker, year, month, day) -> {
             selected[0] = LocalDate.of(year, month + 1, day); date.setText("Scadenza: " + selected[0]);
         }, selected[0].getYear(), selected[0].getMonthValue() - 1, selected[0].getDayOfMonth()).show());
+        final String[] dueTime = {original == null ? "09:00" : original.dueTime};
+        MaterialButton dueHour = new MaterialButton(this); dueHour.setText("Scadenza alle " + dueTime[0]);
+        dueHour.setOnClickListener(v -> { java.time.LocalTime t=java.time.LocalTime.parse(dueTime[0]); new android.app.TimePickerDialog(this,(picker,h,m) -> { dueTime[0]=String.format(Locale.ROOT,"%02d:%02d",h,m); dueHour.setText("Scadenza alle "+dueTime[0]); },t.getHour(),t.getMinute(),true).show(); });
         TextView priorityLabel = new TextView(this); priorityLabel.setText("Priorità");
         Spinner priority = new Spinner(this);
         priority.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, new String[]{"Bassa", "Media", "Alta"}));
         priority.setSelection(original == null ? 1 : original.priority);
         if (original != null) { title.setText(original.title); subject.setText(original.subject); }
-        form.addView(title); form.addView(subject); form.addView(date); form.addView(priorityLabel); form.addView(priority);
+        form.addView(title); form.addView(subject); form.addView(date); form.addView(dueHour); form.addView(priorityLabel); form.addView(priority);
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this).setTitle(original == null ? "Nuova attività" : "Modifica attività")
                 .setView(form).setNegativeButton("Annulla", null).setPositiveButton("Salva", null);
         if (original != null) builder.setNeutralButton("Elimina", (dialog, which) ->
@@ -151,32 +150,24 @@ public class MainActivity extends AppCompatActivity {
             Task task = new Task();
             if (original != null) { task.id = original.id; task.done = original.done; }
             task.title = title.getText().toString().trim(); task.subject = subject.getText().toString().trim();
-            task.due = selected[0].toString(); task.priority = priority.getSelectedItemPosition();
+            task.due = selected[0].toString(); task.dueTime=dueTime[0]; task.priority = priority.getSelectedItemPosition();
             model.save(task); dialog.dismiss();
         }));
         dialog.show();
     }
 
     private void updateTimer() {
-        if (running) {
-            remaining = Math.max(0, deadline - System.currentTimeMillis());
-            if (remaining == 0) {
-                if (!pause) model.record(deadline);
-                pause = !pause; running = false; remaining = (pause ? 5 : 25) * 60_000L;
-                persistTimer();
-                Toast.makeText(this, pause ? "Sessione completata! Avvia la pausa." : "Pausa terminata. Pronto a studiare?", Toast.LENGTH_LONG).show();
-            }
-        }
-        long seconds = (remaining + 999) / 1000;
-        clock.setText(String.format(Locale.ITALIAN, "%02d:%02d", seconds / 60, seconds % 60));
-        timerMode.setText(pause ? "Pausa" : "Sessione di studio");
-        start.setText(running ? "Metti in pausa" : "Avvia");
+        TimerState state=TimerStore.read(this);
+        long seconds=(TimerStore.remaining(this,state)+999)/1000;
+        clock.setText(String.format(Locale.ITALIAN,"%02d:%02d",seconds/60,seconds%60));
+        timerMode.setText(state.breakPhase ? "Pausa" : "Sessione di studio"); start.setText(state.running ? "Metti in pausa" : "Avvia");
     }
-    private void persistTimer() {
-        prefs.edit().putLong("remaining", remaining).putLong("deadline", deadline)
-            .putBoolean("running", running).putBoolean("pause", pause).apply();
+    @Override protected void onResume() {
+        super.onResume(); if (getThemeResIdForAppearance()!=Appearance.theme(this)) { recreate(); return; }
+        if (TimerStore.read(this).running) PomodoroService.command(this,PomodoroService.START);
+        handler.removeCallbacks(tick); tick.run(); render(); model.restoreReminders();
     }
-    @Override protected void onResume() { super.onResume(); if (getThemeResIdForAppearance() != Appearance.theme(this)) { recreate(); return; } handler.removeCallbacks(tick); tick.run(); render(); }
-    @Override protected void onPause() { super.onPause(); handler.removeCallbacks(tick); persistTimer(); }
-    @Override protected void onSaveInstanceState(Bundle state) { state.putInt("section", section); super.onSaveInstanceState(state); }
+    @Override protected void onPause() { super.onPause(); handler.removeCallbacks(tick); }
+    @Override protected void onNewIntent(android.content.Intent intent) { super.onNewIntent(intent); setIntent(intent); if(intent.getBooleanExtra("openTimer",false)) ((BottomNavigationView)findViewById(R.id.navigation)).setSelectedItemId(R.id.timer); }
+    @Override protected void onSaveInstanceState(Bundle state) { state.putInt("section",section); super.onSaveInstanceState(state); }
 }

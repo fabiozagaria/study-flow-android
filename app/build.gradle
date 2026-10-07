@@ -2,10 +2,11 @@ plugins { id 'com.android.application' }
 android {
     namespace 'it.studyflow.app'
     compileSdk 35
-    defaultConfig { applicationId 'it.studyflow.app'; minSdk 26; targetSdk 35; versionCode 5; versionName '1.4' }
+    defaultConfig { applicationId 'it.studyflow.app'; minSdk 26; targetSdk 35; versionCode 6; versionName '1.5' }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
 dependencies {
+    implementation 'androidx.work:work-runtime:2.10.0'
     implementation 'com.google.android.gms:play-services-auth:21.3.0'
     testImplementation 'junit:junit:4.13.2'
     implementation 'androidx.appcompat:appcompat:1.7.0'

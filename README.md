@@ -23,8 +23,8 @@ Se Android Studio richiede il percorso SDK, seleziona quello installato sul tuo 
 - Calendario interno: eventi manuali e proposte da Gmail, con conferma prima del salvataggio.
 - Room: attività, sessioni ed eventi sul dispositivo. Gmail richiede un account Google e una connessione.
 
-Il timer conserva la scadenza quando l'app passa in background o viene chiusa; il completamento viene elaborato al ritorno nell'app. Non ci sono notifiche né allarmi in background. Una sessione sospesa o reimpostata non aggiunge minuti. Il timer usa l'ora del dispositivo: modificarla durante una sessione altera il conteggio.
-Le materie sono campi delle attività; questa versione non ha un catalogo separato, calendario o grafici.
+Il timer continua in background con notifica e comandi di pausa/reset. Al termine registra la sessione e mostra un avviso. Una fase successiva si avvia manualmente; una sessione sospesa o reimpostata non aggiunge minuti. Sono presenti notifiche per completamento e scadenza delle attività. [Dettagli e comportamento Android](docs/NOTIFICATIONS_TIMER.md).
+Le materie sono campi delle attività; il calendario mensile mostra attività ed eventi con indicatori e agenda. Non è presente un catalogo separato delle materie né grafici.
 
 ## Struttura
 
@@ -62,3 +62,7 @@ La versione 1.3 migra il database dalla versione precedente senza eliminare atti
 ## Icona
 
 Pianeta minimal nei colori crema e verde oliva. Icona Android adattiva con variante monocromatica per le icone a tema da Android 13. Favicon PNG e ICO disponibili in `docs/assets/`.
+
+## Novità 1.5
+
+Notifiche di completamento e scadenza con orario modificabile, Pomodoro in background con notifica persistente e calendario mensile con puntini e agenda delle attività. [Istruzioni](docs/NOTIFICATIONS_TIMER.md).

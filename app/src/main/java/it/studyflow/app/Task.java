@@ -9,4 +9,6 @@ public class Task {
     public String due = "";
     public int priority;
     public boolean done;
+    @androidx.annotation.NonNull @androidx.room.ColumnInfo(defaultValue = "'09:00'") public String dueTime = "09:00";
+    @androidx.annotation.NonNull @androidx.room.ColumnInfo(defaultValue = "''") public String reminderSentFor = "";
 }
