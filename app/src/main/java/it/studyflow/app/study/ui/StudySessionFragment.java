@@ -114,6 +114,9 @@ public class StudySessionFragment extends Fragment {
     }
     current = session.items.get(position);
     boolean pending = current.outcome.equals("PENDING"), quiz = session.attempt.kind.equals("QUIZ");
+    ((com.google.android.material.progressindicator.LinearProgressIndicator)
+            root.findViewById(R.id.sessionProgress))
+        .setProgressCompat((position + 1) * 100 / session.items.size(), false);
     ((TextView) root.findViewById(R.id.sessionPosition))
         .setText(
             session.attempt.title
@@ -132,12 +135,35 @@ public class StudySessionFragment extends Fragment {
         button.setId(View.generateViewId());
         button.setTag(i);
         button.setText(labels.getString(i));
-        button.setTextSize(18);
-        button.setPadding(8, 12, 8, 12);
+        button.setTextSize(17);
+        int padding = StudyViews.dp(requireContext(), 14);
+        button.setPadding(padding, padding, padding, padding);
+        button.setTextColor(StudyViews.color(requireContext(), R.color.study_text));
+        button.setButtonTintList(
+            android.content.res.ColorStateList.valueOf(
+                StudyViews.color(requireContext(), R.color.study_quiz)));
         button.setMinHeight((int) (48 * getResources().getDisplayMetrics().density));
         button.setEnabled(pending);
-        options.addView(button, new RadioGroup.LayoutParams(-1, -2));
         Integer choice = restoredDraft ? restoredSelection : current.selectedIndex;
+        int fill = R.color.study_surface, border = R.color.study_border;
+        if (!pending && i == current.correctIndex) {
+          fill = R.color.study_spring_soft;
+          border = R.color.study_spring;
+        } else if (!pending && choice != null && choice == i) {
+          fill = R.color.study_error_soft;
+          border = R.color.study_error;
+        }
+        android.graphics.drawable.StateListDrawable background =
+            new android.graphics.drawable.StateListDrawable();
+        if (pending)
+          background.addState(
+              new int[] {android.R.attr.state_checked},
+              StudyViews.rounded(requireContext(), R.color.study_selected, R.color.study_quiz));
+        background.addState(new int[] {}, StudyViews.rounded(requireContext(), fill, border));
+        button.setBackground(background);
+        RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(-1, -2);
+        params.bottomMargin = StudyViews.dp(requireContext(), 10);
+        options.addView(button, params);
         if (choice != null && choice == i) options.check(button.getId());
       }
     } catch (JSONException e) {
@@ -175,6 +201,21 @@ public class StudySessionFragment extends Fragment {
     boolean visible = !pending || revealed;
     feedback.setVisibility(visible ? View.VISIBLE : View.GONE);
     if (visible) {
+      int fill =
+          pending
+              ? R.color.study_recall_soft
+              : current.outcome.equals("CORRECT")
+                  ? R.color.study_spring_soft
+                  : current.outcome.equals("WRONG")
+                      ? R.color.study_error_soft
+                      : R.color.study_warning_soft;
+      int border =
+          pending
+              ? R.color.study_recall
+              : current.outcome.equals("CORRECT")
+                  ? R.color.study_spring
+                  : current.outcome.equals("WRONG") ? R.color.study_error : R.color.study_warning;
+      feedback.setBackground(StudyViews.rounded(requireContext(), fill, border));
       String text = pending ? "Soluzione guidata" : StudyViews.outcome(current.outcome);
       if (quiz) {
         try {
@@ -235,6 +276,9 @@ public class StudySessionFragment extends Fragment {
   }
 
   private void renderResult() {
+    ((com.google.android.material.progressindicator.LinearProgressIndicator)
+            root.findViewById(R.id.sessionProgress))
+        .setProgressCompat(100, false);
     for (int id :
         new int[] {
           R.id.sessionOptions,

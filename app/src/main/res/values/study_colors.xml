@@ -1,0 +1,22 @@
+<resources>
+    <color name="study_background">#F2F5F8</color>
+    <color name="study_surface">#FFFFFF</color>
+    <color name="study_border">#D4DFE8</color>
+    <color name="study_text">#182B3A</color>
+    <color name="study_muted">#536878</color>
+    <color name="study_java">#A84713</color>
+    <color name="study_java_soft">#FFF0E6</color>
+    <color name="study_spring">#176747</color>
+    <color name="study_spring_soft">#E5F5EC</color>
+    <color name="study_quiz">#245BBB</color>
+    <color name="study_quiz_soft">#EAF1FF</color>
+    <color name="study_recall">#7041AF</color>
+    <color name="study_recall_soft">#F3ECFF</color>
+    <color name="study_warning">#915300</color>
+    <color name="study_warning_soft">#FFF3DC</color>
+    <color name="study_error">#AC3038</color>
+    <color name="study_error_soft">#FDECEF</color>
+    <color name="study_selected">#E8F2FF</color>
+    <color name="study_code">#152735</color>
+    <color name="study_code_text">#E3F3FF</color>
+</resources>

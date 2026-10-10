@@ -98,6 +98,7 @@ public class StudyBrowserFragment extends Fragment {
       for (int id :
           new int[] {
             R.id.studySearch,
+            R.id.studyHero,
             R.id.studyFilters,
             R.id.studyCount,
             R.id.mixedActions,
@@ -136,6 +137,35 @@ public class StudyBrowserFragment extends Fragment {
 
   private void renderCatalog() {
     if (root == null || topicId != null) return;
+    root.findViewById(R.id.studyHero)
+        .setVisibility(
+            showHistory
+                    || !query.trim().isEmpty()
+                    || getResources().getConfiguration().fontScale >= 1.3f
+                ? View.GONE
+                : View.VISIBLE);
+    int selected =
+        showHistory
+            ? R.id.filterHistory
+            : filter.equals("java")
+                ? R.id.filterJava
+                : filter.equals("spring") ? R.id.filterSpring : R.id.filterAll;
+    for (int id :
+        new int[] {R.id.filterAll, R.id.filterJava, R.id.filterSpring, R.id.filterHistory}) {
+      com.google.android.material.button.MaterialButton button = root.findViewById(id);
+      boolean active = id == selected;
+      button.setSelected(active);
+      button.setBackgroundTintList(
+          android.content.res.ColorStateList.valueOf(
+              StudyViews.color(
+                  requireContext(), active ? R.color.study_quiz_soft : R.color.study_surface)));
+      button.setTextColor(
+          StudyViews.color(requireContext(), active ? R.color.study_quiz : R.color.study_muted));
+      button.setStrokeColor(
+          android.content.res.ColorStateList.valueOf(
+              StudyViews.color(
+                  requireContext(), active ? R.color.study_quiz : R.color.study_border)));
+    }
     root.findViewById(R.id.studyTopics).setVisibility(showHistory ? View.GONE : View.VISIBLE);
     root.findViewById(R.id.studyDetail).setVisibility(showHistory ? View.VISIBLE : View.GONE);
     root.findViewById(R.id.mixedActions).setVisibility(showHistory ? View.GONE : View.VISIBLE);
@@ -207,18 +237,20 @@ public class StudyBrowserFragment extends Fragment {
   private void renderMaterial(TheoryMaterial material) {
     LinearLayout content = root.findViewById(R.id.studyContent);
     content.removeAllViews();
-    StudyViews.text(content, material.versionLabel, 14);
-    StudyViews.button(content, "Quiz dell’argomento", () -> model.start(topicId, "QUIZ", false, 0));
-    StudyViews.button(content, "Ripasso attivo", () -> model.start(topicId, "RECALL", false, 0));
-    StudyViews.button(content, "Ripassa errori quiz", () -> model.start(topicId, "QUIZ", true, 0));
-    StudyViews.button(
-        content,
-        "Ripassa autovalutazioni insufficienti",
-        () -> model.start(topicId, "RECALL", true, 0));
+    StudyViews.banner(content, getArguments().getString("title"), material.versionLabel);
     StudyViews.section(content, "Spiegazione", material.explanation, false);
     StudyViews.section(content, "Esempio", material.example, true);
     StudyViews.section(content, "Caso d’uso", material.useCase, false);
     StudyViews.section(content, "Errori comuni", material.commonErrors, false);
+    LinearLayout actions = StudyViews.card(content, R.color.study_quiz);
+    StudyViews.text(actions, "Metti alla prova ciò che hai letto", 21);
+    StudyViews.button(actions, "Quiz dell’argomento", () -> model.start(topicId, "QUIZ", false, 0));
+    StudyViews.button(actions, "Ripasso attivo", () -> model.start(topicId, "RECALL", false, 0));
+    StudyViews.button(actions, "Ripassa errori quiz", () -> model.start(topicId, "QUIZ", true, 0));
+    StudyViews.button(
+        actions,
+        "Ripassa autovalutazioni insufficienti",
+        () -> model.start(topicId, "RECALL", true, 0));
     StudyViews.sources(content, material.sources);
     StudyViews.button(
         content,

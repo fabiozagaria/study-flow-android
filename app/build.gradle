@@ -3,7 +3,7 @@ android {
     namespace 'it.studyflow.app'
     compileSdk 35
     defaultConfig {
-        applicationId 'it.studyflow.app'; minSdk 26; targetSdk 35; versionCode 8; versionName '1.7'
+        applicationId 'it.studyflow.app'; minSdk 26; targetSdk 35; versionCode 9; versionName '1.8'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         javaCompileOptions { annotationProcessorOptions { arguments += ['room.schemaLocation': "$projectDir/schemas".toString()] } }
     }

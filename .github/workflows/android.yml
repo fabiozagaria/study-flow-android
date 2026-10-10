@@ -55,9 +55,13 @@ jobs:
           api-level: 35
           arch: x86_64
           profile: pixel_2
-          script: ./gradlew connectedDebugAndroidTest
+          script: |
+            ./gradlew connectedDebugAndroidTest
+            adb pull /sdcard/Android/data/it.studyflow.app/files/study-visual/ study-screenshots/
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: persistence-test-reports
-          path: app/build/reports/androidTests/
+          path: |
+            app/build/reports/androidTests/
+            study-screenshots/
