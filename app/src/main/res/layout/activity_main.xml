@@ -13,6 +13,7 @@
 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:text="Scegli una materia e concentrati per 25 minuti. Una breve pausa ti aiuterà a ritrovare l’energia." android:textSize="18sp" android:textColor="@color/sf_muted" android:lineSpacingExtra="4dp"/>
 <com.google.android.material.button.MaterialButton android:id="@+id/focus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20dp" android:text="Apri Pomodoro" app:icon="@drawable/ic_time"/>
 </LinearLayout></com.google.android.material.card.MaterialCardView>
+<com.google.android.material.button.MaterialButton android:id="@+id/taskFilter" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mostra tutte le attività"/>
 <TextView android:id="@+id/listHeading" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Il tuo programma" android:textColor="@color/sf_primary" android:textSize="16sp" android:padding="12dp"/>
 <androidx.recyclerview.widget.RecyclerView android:id="@+id/list" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false"/>
 <TextView android:id="@+id/empty" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Il tuo programma è libero.

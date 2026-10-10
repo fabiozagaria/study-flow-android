@@ -24,7 +24,7 @@ Se Android Studio richiede il percorso SDK, seleziona quello installato sul tuo 
 - Room: attività, sessioni ed eventi sul dispositivo. Gmail richiede un account Google e una connessione.
 
 Il timer continua in background con notifica e comandi di pausa/reset. Al termine registra la sessione e mostra un avviso. Una fase successiva si avvia manualmente; una sessione sospesa o reimpostata non aggiunge minuti. Sono presenti notifiche per completamento e scadenza delle attività. [Dettagli e comportamento Android](docs/NOTIFICATIONS_TIMER.md).
-Le materie sono campi delle attività; il calendario mensile mostra attività ed eventi con indicatori e agenda. Non è presente un catalogo separato delle materie né grafici.
+Le materie delle attività restano campi liberi. Studio ha un catalogo separato Java/Spring Boot; il calendario mensile mostra attività ed eventi con indicatori e agenda. Non sono presenti grafici.
 
 ## Struttura
 
@@ -70,3 +70,20 @@ Notifiche di completamento e scadenza con orario modificabile, Pomodoro in backg
 ## Correzioni 1.6
 
 Conto alla rovescia grande direttamente nella notifica, aggiornato ogni secondo da Android, e calendario con numeri centrati e puntini allineati sotto. [Guida Gmail semplificata per uso personale](docs/GMAIL_SETUP.md).
+
+## Studio 1.7
+
+Navigazione: **Oggi · Studio · Pomodoro · Progressi · Calendario**. In Oggi usa il filtro per vedere tutte le attività, comprese quelle future e completate.
+
+Studio include **67 argomenti, 268 quiz e 134 domande aperte**. Ogni argomento presenta spiegazione, esempio, caso d’uso, errori comuni e documentazione ufficiale. Ricerca per titolo/categoria; filtri Java e Spring Boot; quiz misti da 10, 20 o 50 domande. Tutto il contenuto funziona offline, mentre i link aprono un browser e richiedono rete.
+
+Le risposte dei quiz vengono corrette automaticamente. Il ripasso aperto mostra soluzione e criteri: **la valutazione è manuale**, non viene attribuita da un’AI. Teoria letta, risposte corrette e tempo Pomodoro restano misure distinte.
+
+Tentativi e risposte sono salvati in Room: apri **Tentativi** per riprendere o consultare lo storico. Le domande saltate, sbagliate o valutate parziali possono essere riproposte; una risposta successiva corretta le rimuove dalla coda senza cancellare l’errore precedente. Una sessione in corso resta salvata anche uscendo dalla schermata. Nessun tentativo viene eliminato automaticamente.
+
+Il database migra **3 → 4** aggiungendo il catalogo e i tentativi senza ricreare attività, eventi o sessioni Pomodoro. L’importazione del catalogo è atomica e idempotente. Gli aggiornamenti futuri del catalogo già importato, il collegamento tra argomento e Pomodoro e i grafici sono incrementi successivi.
+
+- [Copertura e manutenzione del catalogo](docs/STUDY_CATALOG.md)
+- [Architettura e verifiche Studio](docs/STUDY_ARCHITECTURE.md)
+
+Verifiche: `python3 scripts/validate_study_catalog.py`, `./gradlew assembleDebug assembleDebugAndroidTest testDebugUnitTest lintDebug`; con emulatore o dispositivo `./gradlew connectedDebugAndroidTest`.

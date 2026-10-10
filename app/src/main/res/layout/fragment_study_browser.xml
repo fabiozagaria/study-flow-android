@@ -1,0 +1,16 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+<EditText android:id="@+id/studySearch" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="16dp" android:minHeight="48dp" android:hint="Cerca argomento o categoria" android:inputType="text" android:singleLine="true"/>
+<HorizontalScrollView android:id="@+id/studyFilters" android:layout_width="match_parent" android:layout_height="wrap_content"><LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingHorizontal="16dp">
+<com.google.android.material.button.MaterialButton android:id="@+id/filterAll" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tutti"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/filterJava" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Java"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/filterSpring" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Spring Boot"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/filterHistory" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tentativi"/>
+</LinearLayout></HorizontalScrollView>
+<TextView android:id="@+id/studyCount" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingHorizontal="20dp" android:paddingVertical="8dp" android:textSize="15sp" android:accessibilityLiveRegion="polite"/>
+<LinearLayout android:id="@+id/mixedActions" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:paddingHorizontal="16dp">
+<com.google.android.material.button.MaterialButton android:id="@+id/mixedJava" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Quiz Java"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/mixedSpring" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="Quiz Spring"/>
+</LinearLayout>
+<androidx.recyclerview.widget.RecyclerView android:id="@+id/studyTopics" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" android:padding="16dp"/>
+<androidx.core.widget.NestedScrollView android:id="@+id/studyDetail" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:visibility="gone"><LinearLayout android:id="@+id/studyContent" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp"/></androidx.core.widget.NestedScrollView>
+</LinearLayout>

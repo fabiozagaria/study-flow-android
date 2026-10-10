@@ -1,0 +1,10 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+<com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar" android:layout_width="match_parent" android:layout_height="72dp" android:background="@color/sf_surface" app:title="Studio" app:titleTextAppearance="@style/StudyTitle"/>
+<ProgressBar android:id="@+id/studyBusy" style="?android:attr/progressBarStyleHorizontal" android:layout_width="match_parent" android:layout_height="4dp" android:indeterminate="true" android:visibility="gone"/>
+<LinearLayout android:id="@+id/studyErrorPanel" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="12dp" android:visibility="gone">
+<TextView android:id="@+id/studyError" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:accessibilityLiveRegion="polite"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/studyRetry" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Riprova"/>
+</LinearLayout>
+<androidx.fragment.app.FragmentContainerView android:id="@+id/studyHost" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"/>
+<com.google.android.material.bottomnavigation.BottomNavigationView android:id="@+id/navigation" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/sf_surface" app:menu="@menu/navigation" app:labelVisibilityMode="labeled"/>
+</LinearLayout>

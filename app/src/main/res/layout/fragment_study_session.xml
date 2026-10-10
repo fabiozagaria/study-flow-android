@@ -1,0 +1,19 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/sessionScroll" android:layout_width="match_parent" android:layout_height="match_parent"><LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+<TextView android:id="@+id/sessionPosition" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/sf_primary" android:textSize="16sp"/>
+<TextView android:id="@+id/sessionPrompt" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginVertical="20dp" android:textSize="23sp" android:textIsSelectable="true"/>
+<RadioGroup android:id="@+id/sessionOptions" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+<EditText android:id="@+id/sessionAnswer" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="100dp" android:gravity="top" android:hint="Scrivi la risposta, oppure rispondi a voce" android:inputType="textMultiLine|textCapSentences"/>
+<EditText android:id="@+id/sessionNote" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="64dp" android:hint="Nota sull’errore o dubbio (facoltativa)" android:inputType="textMultiLine|textCapSentences"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/sessionConfirm" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Conferma risposta"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/sessionReveal" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mostra soluzione e criteri"/>
+<TextView android:id="@+id/sessionFeedback" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="20dp" android:textSize="17sp" android:lineSpacingExtra="5dp" android:textIsSelectable="true" android:accessibilityLiveRegion="polite"/>
+<LinearLayout android:id="@+id/sessionRatings" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+<TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Autovalutazione: confronta la tua risposta con i criteri" android:textSize="16sp"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/ratingWrong" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Da ripassare"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/ratingPartial" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Parziale"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/ratingCorrect" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Corretta"/>
+</LinearLayout>
+<com.google.android.material.button.MaterialButton android:id="@+id/sessionSkip" style="@style/Widget.Material3.Button.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Salta: resta da ripassare"/>
+<com.google.android.material.button.MaterialButton android:id="@+id/sessionNext" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Prossima domanda"/>
+<LinearLayout android:id="@+id/sessionResult" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
+</LinearLayout></androidx.core.widget.NestedScrollView>
