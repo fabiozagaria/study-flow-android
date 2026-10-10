@@ -95,7 +95,11 @@ fun StudyTheme(content: @Composable () -> Unit) {
                 medium = RoundedCornerShape(16.dp),
                 large = RoundedCornerShape(20.dp),
             ),
-        content = content,
+        content = {
+            CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurface) {
+                content()
+            }
+        },
     )
 }
 
