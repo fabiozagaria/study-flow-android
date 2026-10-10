@@ -31,6 +31,22 @@ public class StudyActivity extends AppCompatActivity {
           return insets;
         });
     TopLevelNavigation.attach(this, R.id.study);
+    com.google.android.material.bottomnavigation.BottomNavigationView navigation =
+        findViewById(R.id.navigation);
+    // The root already handles system bar insets; don't add the bottom inset a second time.
+    ViewCompat.setOnApplyWindowInsetsListener(navigation, (v, insets) -> insets);
+    android.content.res.ColorStateList navigationColors =
+        new android.content.res.ColorStateList(
+            new int[][] {new int[] {android.R.attr.state_checked}, new int[] {}},
+            new int[] {
+              androidx.core.content.ContextCompat.getColor(this, R.color.study_quiz),
+              androidx.core.content.ContextCompat.getColor(this, R.color.study_muted)
+            });
+    navigation.setItemIconTintList(navigationColors);
+    navigation.setItemTextColor(navigationColors);
+    navigation.setItemActiveIndicatorColor(
+        android.content.res.ColorStateList.valueOf(
+            androidx.core.content.ContextCompat.getColor(this, R.color.study_quiz_soft)));
     MaterialToolbar toolbar = findViewById(R.id.toolbar);
     toolbar.setNavigationIcon(androidx.appcompat.R.drawable.abc_ic_ab_back_material);
     toolbar.setNavigationOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
