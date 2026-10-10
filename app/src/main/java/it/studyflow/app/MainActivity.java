@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private TaskAdapter adapter;
     private List<Task> tasks = new ArrayList<>();
     private int section = R.id.today, minutes;
+    private boolean allTasks;
     private TextView summary, clock, timerMode;
     private MaterialButton start;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -82,14 +83,18 @@ public class MainActivity extends AppCompatActivity {
         start.setOnClickListener(v -> PomodoroService.command(this, TimerStore.read(this).running ? PomodoroService.PAUSE : PomodoroService.START));
         findViewById(R.id.reset).setOnClickListener(v -> PomodoroService.command(this, PomodoroService.RESET));
         BottomNavigationView nav = findViewById(R.id.navigation);
-        nav.setOnItemSelectedListener(item -> { if (item.getItemId() == R.id.calendar) { startActivity(new android.content.Intent(this, CalendarActivity.class)); return false; } section = item.getItemId(); render(); return true; });
-        if (state != null) nav.setSelectedItemId(state.getInt("section", R.id.today));
+        nav.setOnItemSelectedListener(item -> { int id=item.getItemId(); if (id == R.id.calendar || id == R.id.study) { TopLevelNavigation.open(this,id); return false; } section = id; render(); return true; });
+        findViewById(R.id.taskFilter).setOnClickListener(v -> { allTasks=!allTasks; render(); });
+        if (state != null) { allTasks=state.getBoolean("allTasks"); nav.setSelectedItemId(state.getInt("section", R.id.today)); }
+        int requested=getIntent().getIntExtra("section",R.id.today); if(requested==R.id.today||requested==R.id.timer||requested==R.id.stats) { if(state==null)nav.setSelectedItemId(requested); }
         if (getIntent().getBooleanExtra("openTimer",false)) nav.setSelectedItemId(R.id.timer);
         render();
     }
 
     private void render() {
-        boolean taskPage = section == R.id.today || section == R.id.tasks;
+        boolean taskPage = section == R.id.today;
+        findViewById(R.id.taskFilter).setVisibility(taskPage?View.VISIBLE:View.GONE);
+        ((MaterialButton)findViewById(R.id.taskFilter)).setText(allTasks?"Mostra solo attività in scadenza":"Mostra tutte le attività");
         findViewById(R.id.list).setVisibility(taskPage ? View.VISIBLE : View.GONE);
         findViewById(R.id.add).setVisibility(taskPage ? View.VISIBLE : View.GONE);
         findViewById(R.id.timerPanel).setVisibility(section == R.id.timer ? View.VISIBLE : View.GONE);
@@ -97,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         String today = LocalDate.now().toString();
         for (Task task : tasks) {
             if (task.done) completed++;
-            if (section == R.id.tasks || (!task.done && task.due.compareTo(today) <= 0)) shown.add(task);
+            if (allTasks || (!task.done && task.due.compareTo(today) <= 0)) shown.add(task);
         }
         adapter.submit(shown);
         findViewById(R.id.focusCard).setVisibility(section == R.id.today ? View.VISIBLE : View.GONE);
@@ -105,10 +110,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.empty).setVisibility(taskPage && shown.isEmpty() ? View.VISIBLE : View.GONE);
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         if (section == R.id.today) {
-            toolbar.setTitle("StudyFlow");
-            summary.setText(shown.isEmpty() ? "Tutto in ordine\nNessuna attività in scadenza" : shown.size() + " attività da completare\nIn scadenza oggi o in ritardo");
-        } else if (section == R.id.tasks) {
-            toolbar.setTitle("Le tue attività"); summary.setText(tasks.isEmpty() ? "Aggiungi la tua prima attività.\nTocca una scheda per modificarla." : tasks.size() + " attività · " + completed + " completate\nTocca una scheda per modificarla.");
+            toolbar.setTitle(allTasks?"Le tue attività":"StudyFlow");
+            summary.setText(allTasks ? tasks.size()+" attività · "+completed+" completate\nTocca una scheda per modificarla." : shown.isEmpty() ? "Tutto in ordine\nNessuna attività in scadenza" : shown.size() + " attività da completare\nIn scadenza oggi o in ritardo");
         } else if (section == R.id.timer) {
             toolbar.setTitle("Concentrati"); summary.setText("Dedica questo tempo a una sola attività.");
         } else {
@@ -168,6 +171,6 @@ public class MainActivity extends AppCompatActivity {
         handler.removeCallbacks(tick); tick.run(); render(); model.restoreReminders();
     }
     @Override protected void onPause() { super.onPause(); handler.removeCallbacks(tick); }
-    @Override protected void onNewIntent(android.content.Intent intent) { super.onNewIntent(intent); setIntent(intent); if(intent.getBooleanExtra("openTimer",false)) ((BottomNavigationView)findViewById(R.id.navigation)).setSelectedItemId(R.id.timer); }
-    @Override protected void onSaveInstanceState(Bundle state) { state.putInt("section",section); super.onSaveInstanceState(state); }
+    @Override protected void onNewIntent(android.content.Intent intent) { super.onNewIntent(intent); setIntent(intent); int requested=intent.getIntExtra("section",-1); if(requested==R.id.today||requested==R.id.timer||requested==R.id.stats) ((BottomNavigationView)findViewById(R.id.navigation)).setSelectedItemId(requested); if(intent.getBooleanExtra("openTimer",false)) ((BottomNavigationView)findViewById(R.id.navigation)).setSelectedItemId(R.id.timer); }
+    @Override protected void onSaveInstanceState(Bundle state) { state.putInt("section",section); state.putBoolean("allTasks",allTasks); super.onSaveInstanceState(state); }
 }

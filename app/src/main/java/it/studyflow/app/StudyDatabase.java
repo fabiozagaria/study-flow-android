@@ -1,9 +1,11 @@
 package it.studyflow.app;
 import android.content.Context;
 import androidx.room.*;
-@Database(entities = {Task.class, StudySession.class, CalendarEvent.class}, version = 3, exportSchema = false)
+import it.studyflow.app.study.data.*;
+@Database(entities = {Task.class, StudySession.class, CalendarEvent.class, Subject.class, Topic.class, TheoryMaterial.class, Question.class, AnswerOption.class, StudyAttempt.class, AttemptItem.class, MaterialProgress.class}, version = 4, exportSchema = true)
 public abstract class StudyDatabase extends RoomDatabase {
     public abstract StudyDao dao();
+    public abstract LearningDao learning();
     private static volatile StudyDatabase instance;
     public static StudyDatabase get(Context context) {
         if (instance == null) synchronized (StudyDatabase.class) {
@@ -17,7 +19,7 @@ public abstract class StudyDatabase extends RoomDatabase {
                     db.execSQL("ALTER TABLE tasks ADD COLUMN dueTime TEXT NOT NULL DEFAULT '09:00'");
                     db.execSQL("ALTER TABLE tasks ADD COLUMN reminderSentFor TEXT NOT NULL DEFAULT ''");
                 }
-            }).build();
+            }, StudyMigrations.FROM_3_TO_4).build();
         }
         return instance;
     }

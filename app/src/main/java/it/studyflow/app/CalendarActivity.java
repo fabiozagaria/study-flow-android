@@ -45,6 +45,7 @@ public class CalendarActivity extends AppCompatActivity {
     private int dp(int n) { return (int)(n * getResources().getDisplayMetrics().density); }
     @Override protected void onCreate(Bundle state) {
         Appearance.apply(this); theme = Appearance.theme(this); setTheme(theme); super.onCreate(state); setContentView(R.layout.activity_calendar);
+        TopLevelNavigation.attach(this,R.id.calendar);
         new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView()).setAppearanceLightNavigationBars(getResources().getBoolean(R.bool.light_bars));
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root), (v, insets) -> {
             androidx.core.graphics.Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars()); v.setPadding(bars.left,bars.top,bars.right,bars.bottom); return insets;

@@ -44,7 +44,7 @@ public class SettingsActivity extends AppCompatActivity {
         com.google.android.material.button.MaterialButton notifications = new com.google.android.material.button.MaterialButton(this);
         notifications.setText("Gestisci notifiche"); notifications.setOnClickListener(v -> startActivity(new android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, getPackageName()))); content.addView(notifications);
         TextView aboutLabel = new TextView(this); aboutLabel.setText("Informazioni"); aboutLabel.setTextSize(16); aboutLabel.setTextColor(getColor(R.color.sf_primary)); aboutLabel.setPadding(0,dp(32),0,dp(24)); content.addView(aboutLabel);
-        TextView about = new TextView(this); about.setText("StudyFlow\nVersione 1.6\n\nIl tuo planner di studio, sul tuo dispositivo."); about.setTextSize(18); about.setLineSpacing(dp(4),1); content.addView(about);
+        TextView about = new TextView(this); about.setText("StudyFlow\nVersione 1.8\n\nIl tuo planner di studio, sul tuo dispositivo."); about.setTextSize(18); about.setLineSpacing(dp(4),1); content.addView(about);
         TextView signature = new TextView(this); signature.setText("Sviluppato da fabiozagariadev"); signature.setTextSize(18); signature.setPadding(0, dp(24), 0, dp(12)); content.addView(signature);
         addProfileLink(content, "GitHub · fabiozagaria", "https://github.com/fabiozagaria");
         if (!getString(R.string.author_linkedin).isEmpty()) addProfileLink(content, "LinkedIn", getString(R.string.author_linkedin));

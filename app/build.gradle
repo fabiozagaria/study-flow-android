@@ -1,14 +1,36 @@
-plugins { id 'com.android.application' }
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.compose'
+}
 android {
     namespace 'it.studyflow.app'
     compileSdk 35
-    defaultConfig { applicationId 'it.studyflow.app'; minSdk 26; targetSdk 35; versionCode 7; versionName '1.6' }
+    defaultConfig {
+        applicationId 'it.studyflow.app'; minSdk 26; targetSdk 35; versionCode 10; versionName '1.9'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        javaCompileOptions { annotationProcessorOptions { arguments += ['room.schemaLocation': "$projectDir/schemas".toString()] } }
+    }
+    sourceSets { androidTest.assets.srcDirs += files("$projectDir/schemas") }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    kotlinOptions { jvmTarget = '17' }
+    buildFeatures { compose true }
 }
 dependencies {
+    // Compatible UI-only addition: keep AGP, SDK, Java/Room and Fragment navigation.
+    implementation platform('androidx.compose:compose-bom:2025.05.01')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.animation:animation'
+    implementation 'androidx.compose.runtime:runtime-livedata'
+    androidTestImplementation platform('androidx.compose:compose-bom:2025.05.01')
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     implementation 'androidx.work:work-runtime:2.10.0'
     implementation 'com.google.android.gms:play-services-auth:21.3.0'
     testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.room:room-testing:2.6.1'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
