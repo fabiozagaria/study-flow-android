@@ -130,7 +130,7 @@ private fun Lesson(
                     StudyHeading("Esempio da seguire")
                     StudyCode(material.example)
                     StudyCaption(
-                        "Leggi il codice insieme alla spiegazione. Puoi selezionare e copiare il testo."
+                        "Frammento didattico: import e contesto del metodo possono essere omessi. Leggilo insieme alla spiegazione; puoi selezionare e copiare il testo."
                     )
                 }
                 ExpandablePanel("Quando lo useresti", material.useCase, "lessonUseCase")

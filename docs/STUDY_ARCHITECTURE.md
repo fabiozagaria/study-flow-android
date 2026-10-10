@@ -2,7 +2,7 @@
 
 ## Confini
 
-Java/XML e database `studyflow.db` esistenti. `StudyActivity` ospita `StudyBrowserFragment` e `StudySessionFragment`; `StudyViewModel` espone stato tramite LiveData; `StudyRepository` serializza I/O e scritture su executor e applica transazioni Room. `LearningDao` è separato dal DAO planner. I componenti nuovi vivono sotto `study.data` e `study.ui`; il planner non viene riscritto.
+Database `studyflow.db` e dominio Java esistenti. La UI pilota 1.9 usa Kotlin/Compose Material 3 per lettura e sessioni, mentre catalogo, storico e altre sezioni mantengono Java/XML fino alla validazione. Il design system e i confini sono descritti in `STUDY_COMPOSE_PILOT.md`. `StudyActivity` ospita `StudyBrowserFragment` e `StudySessionFragment`; `StudyViewModel` espone stato tramite LiveData; `StudyRepository` serializza I/O e scritture su executor e applica transazioni Room. `LearningDao` è separato dal DAO planner. I componenti nuovi vivono sotto `study.data` e `study.ui`; il planner non viene riscritto.
 
 Il catalogo usa Subject, Topic, TheoryMaterial, Question e AnswerOption. MaterialProgress registra solo lettura. StudyAttempt e AttemptItem conservano tentativo, ordine e snapshot di testo/opzioni/soluzione/criteri. Non dipendono dalla permanenza della domanda originale per mostrare lo storico. Gli id sono stabili; la generazione delle opzioni è riproducibile e lo shuffle di sessione conserva l’indice corretto nello snapshot.
 
@@ -20,4 +20,4 @@ Verifica manuale: installazione vuota e upgrade; ricerca senza risultati; font g
 
 ## Incrementi futuri
 
-Aggiornamento catalogo per revisione senza perdere letture/storico, editor/import, spaced repetition, collegamento persistente dell’argomento al Pomodoro, statistiche per materia, gestione esplicita di eliminazione dello storico. Nessun grading semantico delle risposte libere è presente.
+L’edizione teorica 2 aggiorna già i soli materiali in-place senza perdere letture/storico o modificare quiz. Restano futuri aggiornamenti generali del catalogo con aggiunte e rimozioni, editor/import, spaced repetition, collegamento persistente dell’argomento al Pomodoro, statistiche per materia, gestione esplicita di eliminazione dello storico. Nessun grading semantico delle risposte libere è presente.

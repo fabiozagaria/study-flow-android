@@ -1,6 +1,6 @@
 # Studio — copertura del catalogo
 
-Catalogo originale in italiano, revisione 1. Java SE 21 (esempi Java 17 salvo indicazione), Spring Boot 3.5 / Spring Framework 6 / Jakarta. Gli esempi backend sono didattici e non vengono eseguiti dall’app Android.
+Catalogo originale in italiano, revisione 2: spiegazioni con prerequisiti, costruzione del concetto e lettura guidata dell’esempio; domande e rubriche invariate dalla revisione 1. Java SE 21 (esempi Java 17 salvo indicazione), Spring Boot 3.5 / Spring Framework 6 / Jakarta. Gli esempi backend sono didattici e non vengono eseguiti dall’app Android.
 
 67 argomenti, 268 quiz a scelta singola con tre opzioni, 134 domande aperte con criteri. Le domande aperte sono autovalutate: non esiste un correttore semantico automatico.
 
