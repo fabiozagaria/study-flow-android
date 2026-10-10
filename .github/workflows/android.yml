@@ -57,7 +57,7 @@ jobs:
           profile: pixel_2
           script: |
             ./gradlew connectedDebugAndroidTest
-            adb pull /sdcard/Android/data/it.studyflow.app/files/study-visual/ study-screenshots/
+            adb pull /data/local/tmp/study-visual/ study-screenshots/
       - uses: actions/upload-artifact@v4
         if: always()
         with:

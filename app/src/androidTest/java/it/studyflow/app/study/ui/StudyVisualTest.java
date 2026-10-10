@@ -17,8 +17,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import it.studyflow.app.R;
 import it.studyflow.app.StudyActivity;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import org.junit.Test;
@@ -131,6 +133,27 @@ public class StudyVisualTest {
       assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG, 100, out));
     } finally {
       bitmap.recycle();
+    }
+    shell("mkdir -p /data/local/tmp/study-visual");
+    shell(
+        "cp "
+            + new File(folder, name + ".png").getAbsolutePath()
+            + " /data/local/tmp/study-visual/"
+            + name
+            + ".png");
+  }
+
+  private void shell(String command) throws Exception {
+    try (InputStream input =
+        new android.os.ParcelFileDescriptor.AutoCloseInputStream(
+            InstrumentationRegistry.getInstrumentation()
+                .getUiAutomation()
+                .executeShellCommand(command))) {
+      ByteArrayOutputStream output = new ByteArrayOutputStream();
+      byte[] buffer = new byte[1024];
+      int count;
+      while ((count = input.read(buffer)) != -1) output.write(buffer, 0, count);
+      assertEquals("", output.toString("UTF-8").trim());
     }
   }
 }
