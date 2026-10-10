@@ -11,3 +11,5 @@ app/build/
 *.aab
 .env
 .env.*
+__pycache__/
+*.pyc

@@ -12,7 +12,6 @@ public final class CatalogImporter {
   private CatalogImporter() {}
 
   public static void seed(Context context, StudyDatabase db) throws IOException, JSONException {
-    if (db.learning().materialCount() > 0) return;
     String json;
     try (InputStream in = context.getAssets().open("study_catalog.json");
         ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -87,8 +86,17 @@ public final class CatalogImporter {
     }
     db.runInTransaction(
         () -> {
-          if (db.learning().materialCount() > 0) return;
           LearningDao dao = db.learning();
+          if (dao.materialCount() > 0) {
+            // Theory-only edition. Questions, options, snapshots and progress are untouched.
+            for (TheoryMaterial material : materials) {
+              TheoryMaterial existing = dao.material(material.topicId);
+              if (existing != null && existing.revision < material.revision) {
+                dao.updateTheory(material);
+              }
+            }
+            return;
+          }
           dao.subjects(subjects);
           dao.topics(topics);
           dao.materials(materials);

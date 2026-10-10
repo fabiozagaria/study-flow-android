@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.*;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import it.studyflow.app.*;
 import it.studyflow.app.study.data.*;
+import it.studyflow.app.study.ui.compose.StudyCompose;
 import java.util.*;
 
 public class StudyBrowserFragment extends Fragment {
@@ -37,6 +38,20 @@ public class StudyBrowserFragment extends Fragment {
   }
 
   @Override
+  public View onCreateView(
+      @NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle state) {
+    topicId = getArguments() == null ? null : getArguments().getString("topic");
+    if (topicId == null) return super.onCreateView(inflater, container, state);
+    model = new ViewModelProvider(requireActivity()).get(StudyViewModel.class);
+    Runnable returnToAttempt =
+        requireArguments().getBoolean("fromSession", false)
+            ? () -> requireActivity().getSupportFragmentManager().popBackStack()
+            : null;
+    return StudyCompose.lesson(
+        requireContext(), topicId, requireArguments().getString("title"), model, returnToAttempt);
+  }
+
+  @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
     root = view;
     model = new ViewModelProvider(requireActivity()).get(StudyViewModel.class);
@@ -48,6 +63,10 @@ public class StudyBrowserFragment extends Fragment {
     }
     ((StudyActivity) requireActivity())
         .setStudyTitle(topicId == null ? "Studio" : getArguments().getString("title"), false);
+    if (topicId != null) {
+      reload();
+      return;
+    }
     RecyclerView list = view.findViewById(R.id.studyTopics);
     list.setLayoutManager(new LinearLayoutManager(requireContext()));
     adapter = new TopicAdapter(t -> ((StudyActivity) requireActivity()).openTopic(t.id, t.title));
@@ -88,25 +107,6 @@ public class StudyBrowserFragment extends Fragment {
           history = rows;
           renderCatalog();
         });
-    model.material.observe(
-        getViewLifecycleOwner(),
-        material -> {
-          if (topicId != null && material != null && topicId.equals(material.topicId))
-            renderMaterial(material);
-        });
-    if (topicId != null) {
-      for (int id :
-          new int[] {
-            R.id.studySearch,
-            R.id.studyHero,
-            R.id.studyFilters,
-            R.id.studyCount,
-            R.id.mixedActions,
-            R.id.studyTopics
-          }) view.findViewById(id).setVisibility(View.GONE);
-      view.findViewById(R.id.studyDetail).setVisibility(View.VISIBLE);
-      reload();
-    }
   }
 
   private void filter(String value) {
@@ -232,32 +232,6 @@ public class StudyBrowserFragment extends Fragment {
                     ? pending + " tentativi da riprendere in Tentativi"
                     : "Teoria letta e comprensione sono misure distinte.")
                 + (shown.isEmpty() ? "\nNessun argomento corrisponde alla ricerca." : ""));
-  }
-
-  private void renderMaterial(TheoryMaterial material) {
-    LinearLayout content = root.findViewById(R.id.studyContent);
-    content.removeAllViews();
-    StudyViews.banner(content, getArguments().getString("title"), material.versionLabel);
-    StudyViews.section(content, "Spiegazione", material.explanation, false);
-    StudyViews.section(content, "Esempio", material.example, true);
-    StudyViews.section(content, "Caso d’uso", material.useCase, false);
-    StudyViews.section(content, "Errori comuni", material.commonErrors, false);
-    LinearLayout actions = StudyViews.card(content, R.color.study_quiz);
-    StudyViews.text(actions, "Metti alla prova ciò che hai letto", 21);
-    StudyViews.button(actions, "Quiz dell’argomento", () -> model.start(topicId, "QUIZ", false, 0));
-    StudyViews.button(actions, "Ripasso attivo", () -> model.start(topicId, "RECALL", false, 0));
-    StudyViews.button(actions, "Ripassa errori quiz", () -> model.start(topicId, "QUIZ", true, 0));
-    StudyViews.button(
-        actions,
-        "Ripassa autovalutazioni insufficienti",
-        () -> model.start(topicId, "RECALL", true, 0));
-    StudyViews.sources(content, material.sources);
-    StudyViews.button(
-        content,
-        "Segna teoria come letta",
-        () -> {
-          model.read(topicId);
-        });
   }
 
   public void reload() {

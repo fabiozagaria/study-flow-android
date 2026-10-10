@@ -697,7 +697,9 @@ WebFlux è sempre più veloce di MVC?|No|Sì|Solo con HTTPS|La scelta dipende da
 
 
 def build():
-    catalog={'revision':1,'scope':'Java SE 21 e Spring Boot 3.5: catalogo introduttivo e intermedio con approfondimenti. Non è l’intera specifica Java né tutto l’ecosistema Spring.','subjects':[{'id':'java','title':'Java'},{'id':'spring','title':'Spring Boot'}],'topics':TOPICS}
+    from study_reading_guides import apply_guides
+    apply_guides(TOPICS)
+    catalog={'revision':2,'scope':'Java SE 21 e Spring Boot 3.5: catalogo introduttivo e intermedio con approfondimenti. Non è l’intera specifica Java né tutto l’ecosistema Spring.','subjects':[{'id':'java','title':'Java'},{'id':'spring','title':'Spring Boot'}],'topics':TOPICS}
     path=Path(__file__).resolve().parents[1]/'app/src/main/assets/study_catalog.json'
     path.write_text(json.dumps(catalog,ensure_ascii=False,indent=2)+'\n')
     print(f'{len(TOPICS)} argomenti; {sum(q["kind"]=="QUIZ" for t in TOPICS for q in t["questions"])} quiz; {sum(q["kind"]=="RECALL" for t in TOPICS for q in t["questions"])} ripassi')

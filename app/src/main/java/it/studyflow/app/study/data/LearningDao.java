@@ -18,6 +18,10 @@ public interface LearningDao {
   @Insert(onConflict = OnConflictStrategy.ABORT)
   void materials(List<TheoryMaterial> values);
 
+  /** Update text in place: REPLACE would delete rows referenced by reading progress. */
+  @Update
+  void updateTheory(TheoryMaterial value);
+
   @Insert(onConflict = OnConflictStrategy.ABORT)
   void questions(List<Question> values);
 
