@@ -56,8 +56,10 @@ jobs:
           arch: x86_64
           profile: pixel_2
           script: |
-            ./gradlew connectedDebugAndroidTest
-            adb pull /data/local/tmp/study-visual/ study-screenshots/
+            test_exit=0
+            ./gradlew connectedDebugAndroidTest || test_exit=$?
+            adb pull /data/local/tmp/study-visual/ study-screenshots/ || true
+            exit "$test_exit"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

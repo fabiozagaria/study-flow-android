@@ -137,7 +137,9 @@ class StudyComposeTest {
                 .performTextInput("Runnable descrive il lavoro; start avvia il thread.")
             scenario.recreate()
             awaitNode("recallAnswer")
-            compose.onNodeWithTag("recallAnswer").assertTextContains("Runnable descrive il lavoro")
+            compose
+                .onNodeWithTag("recallAnswer")
+                .assertTextContains("Runnable descrive il lavoro; start avvia il thread.")
             compose.onNodeWithTag("recallReveal").performClick()
             compose.onNodeWithTag("ratingPARTIAL").performScrollTo().performClick()
             awaitNode("quizResult")
